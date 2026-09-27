@@ -2,10 +2,37 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>はじめてのページ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タスクボード</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>こんにちは！</h1>
-    <p>これがトップページです。</p>
+    <header class="app-header">
+        <h1>タスクボード</h1>
+    </header>
+
+    <form id="add-task-form" class="add-task-form">
+        <input type="text" id="new-task-input" placeholder="新しいタスクを入力..." autocomplete="off">
+        <button type="submit">追加</button>
+    </form>
+
+    <main class="board">
+        <section class="column" data-status="todo">
+            <h2 class="column-title">未着手</h2>
+            <div class="card-list" id="list-todo"></div>
+        </section>
+
+        <section class="column" data-status="doing">
+            <h2 class="column-title">進行中</h2>
+            <div class="card-list" id="list-doing"></div>
+        </section>
+
+        <section class="column" data-status="done">
+            <h2 class="column-title">完了</h2>
+            <div class="card-list" id="list-done"></div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
 </body>
 </html>
