@@ -28,6 +28,40 @@ public class TaskService {
         return repository.findById(id);
     }
 
+    /** 状態・優先度・色を省略したときは「未着手・中・白」にし、その状態の列の末尾に追加する。 */
+    @Transactional
+    public Task create(TaskRequest request) {
+        TaskStatus status = request.status() != null ? request.status() : TaskStatus.TODO;
+        Priority priority = request.priority() != null ? request.priority() : Priority.MEDIUM;
+        CardColor color = request.color() != null ? request.color() : CardColor.WHITE;
+        Task task = new Task(request.normalizedTitle(), status, request.dueDate(), priority,
+                request.normalizedCategory(), color, repository.maxSortOrder(status) + 1);
+        return repository.save(task);
+    }
+
+    /** 全項目を置き換える。状態が変わるときは、移動先の列の末尾に置く。 */
+    @Transactional
+    public Optional<Task> update(long id, TaskRequest request) {
+        return repository.findById(id).map(task -> {
+            int nextOrder = request.status() != task.getStatus()
+                    ? repository.maxSortOrder(request.status()) + 1
+                    : task.getSortOrder();
+            task.update(request.normalizedTitle(), request.dueDate(), request.priority(),
+                    request.normalizedCategory(), request.color());
+            task.moveTo(request.status(), nextOrder);
+            return task;
+        });
+    }
+
+    @Transactional
+    public boolean delete(long id) {
+        if (!repository.existsById(id)) {
+            return false;
+        }
+        repository.deleteById(id);
+        return true;
+    }
+
     /** 期限なし・カテゴリなしは末尾。同順位のときは手動の並び順にそろえる。 */
     static List<Task> sorted(List<Task> tasks, TaskSortKey key) {
         Comparator<Task> comparator = switch (key) {
