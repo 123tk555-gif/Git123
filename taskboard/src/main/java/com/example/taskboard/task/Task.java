@@ -47,6 +47,31 @@ public class Task {
     protected Task() {
     }
 
+    public Task(String title, TaskStatus status, LocalDate dueDate, Priority priority, String category,
+            CardColor color, int sortOrder) {
+        this.title = title;
+        this.status = status;
+        this.dueDate = dueDate;
+        this.priority = priority;
+        this.category = category;
+        this.color = color;
+        this.sortOrder = sortOrder;
+        this.createdAt = Instant.now();
+    }
+
+    public void update(String title, LocalDate dueDate, Priority priority, String category, CardColor color) {
+        this.title = title;
+        this.dueDate = dueDate;
+        this.priority = priority;
+        this.category = category;
+        this.color = color;
+    }
+
+    public void moveTo(TaskStatus status, int sortOrder) {
+        this.status = status;
+        this.sortOrder = sortOrder;
+    }
+
     public Long getId() {
         return id;
     }
