@@ -1,0 +1,33 @@
+:root {
+  --text: #000;
+  --bg: #fff;
+  --header-bg: #003a70;
+  --header-text: #fff;
+  --focus: #b35c00;
+
+  font-family: system-ui, 'Segoe UI', 'Yu Gothic UI', 'Meiryo', sans-serif;
+  font-size: 20px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 4px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.app-header {
+  padding: 16px 24px;
+  background: var(--header-bg);
+  color: var(--header-text);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 32px;
+}
