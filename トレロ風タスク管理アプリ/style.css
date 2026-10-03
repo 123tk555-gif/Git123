@@ -1,0 +1,676 @@
+/* ===== 配色(テーマ) =====
+   文字と背景のコントラスト比は、通常文字で 4.5:1 以上、枠線などの部品で 3:1 以上にしている */
+:root {
+    color-scheme: light;
+    --page-bg: #e8edf3;
+    --header-bg: #0b3d66;
+    --header-fg: #ffffff;
+    --surface: #ffffff;
+    --column-bg: #f3f6fa;
+    --column-border: #7b8794;
+    --card-bg: #ffffff;
+    --card-border: #7b8794;
+    --text: #1a1a1a;
+    --text-muted: #46505c;
+    --control-border: #5b6675;
+    --input-bg: #ffffff;
+    --accent: #0b5cad;
+    --accent-hover: #084a8c;
+    --accent-fg: #ffffff;
+    --hover-bg: #e6ebf1;
+    --danger-text: #b3261e;
+    --danger-soft: #fde7e5;
+    --danger-bg: #b3261e;
+    --danger-fg: #ffffff;
+    --warn-bg: #ffd54f;
+    --warn-fg: #1a1a1a;
+    --prio-high: #b3261e;
+    --prio-medium: #8a5300;
+    --prio-low: #0b5cad;
+    --focus: #c2410c;
+    --backdrop: rgba(10, 20, 35, 0.65);
+    --chip-border-color: transparent;
+    --border-w: 2px;
+    --card-tint: 16%;
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --page-bg: #12161c;
+    --header-bg: #0a0d12;
+    --header-fg: #ffffff;
+    --surface: #232a34;
+    --column-bg: #1b212a;
+    --column-border: #6b7789;
+    --card-bg: #2a323e;
+    --card-border: #7d8898;
+    --text: #f2f5f8;
+    --text-muted: #c0c9d4;
+    --control-border: #9aa5b4;
+    --input-bg: #12161c;
+    --accent: #7cc0ff;
+    --accent-hover: #a5d3ff;
+    --accent-fg: #0a1a2c;
+    --hover-bg: #303947;
+    --danger-text: #ff9a90;
+    --danger-soft: #4a2320;
+    --danger-bg: #ff8a80;
+    --danger-fg: #1a1a1a;
+    --warn-bg: #ffd54f;
+    --warn-fg: #1a1a1a;
+    --prio-high: #ff9a90;
+    --prio-medium: #ffca5f;
+    --prio-low: #7cc0ff;
+    --focus: #ffd54f;
+    --backdrop: rgba(0, 0, 0, 0.75);
+    --card-tint: 20%;
+}
+
+html[data-theme="contrast"] {
+    color-scheme: dark;
+    --page-bg: #000000;
+    --header-bg: #000000;
+    --header-fg: #ffffff;
+    --surface: #000000;
+    --column-bg: #000000;
+    --column-border: #ffffff;
+    --card-bg: #000000;
+    --card-border: #ffffff;
+    --text: #ffffff;
+    --text-muted: #e6e6e6;
+    --control-border: #ffffff;
+    --input-bg: #000000;
+    --accent: #ffea00;
+    --accent-hover: #fff59a;
+    --accent-fg: #000000;
+    --hover-bg: #262626;
+    --danger-text: #ff8080;
+    --danger-soft: #330000;
+    --danger-bg: #ff6b6b;
+    --danger-fg: #000000;
+    --warn-bg: #ffea00;
+    --warn-fg: #000000;
+    --prio-high: #ff8080;
+    --prio-medium: #ffea00;
+    --prio-low: #6fd0ff;
+    --focus: #00e5ff;
+    --backdrop: rgba(0, 0, 0, 0.85);
+    --chip-border-color: #ffffff;
+    --border-w: 3px;
+    --card-tint: 25%;
+}
+
+/* カテゴリー・カードの色(文字色は背景に対して 4.5:1 以上になる組み合わせ) */
+.color-red { --c: #c9372c; --c-fg: #ffffff; }
+.color-orange { --c: #f5a623; --c-fg: #1a1a1a; }
+.color-yellow { --c: #ffd54f; --c-fg: #1a1a1a; }
+.color-green { --c: #1e7b34; --c-fg: #ffffff; }
+.color-blue { --c: #0b5cad; --c-fg: #ffffff; }
+.color-purple { --c: #7a3ea1; --c-fg: #ffffff; }
+.color-pink { --c: #b8256f; --c-fg: #ffffff; }
+.color-gray { --c: #545b66; --c-fg: #ffffff; }
+
+/* ===== 基本 ===== */
+* {
+    box-sizing: border-box;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* 標準は 18px。ブラウザの文字サイズ設定にも追従する */
+html {
+    font-size: 112.5%;
+}
+
+html[data-font-size="large"] {
+    font-size: 137.5%;
+}
+
+html[data-font-size="xlarge"] {
+    font-size: 162.5%;
+}
+
+body {
+    margin: 0;
+    font-family: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Meiryo, sans-serif;
+    line-height: 1.6;
+    background: var(--page-bg);
+    color: var(--text);
+}
+
+:focus-visible {
+    outline: 0.2rem solid var(--focus);
+    outline-offset: 0.15rem;
+}
+
+/* ===== ボタン・入力欄 ===== */
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.choice {
+    min-height: 2.75rem;
+    padding: 0.4rem 1rem;
+    border: var(--border-w) solid transparent;
+    border-radius: 0.5rem;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-small {
+    min-height: 2.25rem;
+    padding: 0.2rem 0.75rem;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-fg);
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.btn-secondary,
+.choice {
+    background: var(--surface);
+    border-color: var(--control-border);
+    color: var(--text);
+}
+
+.btn-secondary:hover,
+.choice:hover {
+    background: var(--hover-bg);
+}
+
+.btn-danger {
+    background: var(--surface);
+    border-color: var(--danger-text);
+    color: var(--danger-text);
+}
+
+.btn-danger:hover {
+    background: var(--danger-soft);
+}
+
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* 選択中は色だけでなく「✓」でも分かるようにする */
+.choice[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-fg);
+}
+
+.choice[aria-pressed="true"]::before {
+    content: "✓ ";
+}
+
+.text-input {
+    display: block;
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.45rem 0.7rem;
+    border: var(--border-w) solid var(--control-border);
+    border-radius: 0.4rem;
+    background: var(--input-bg);
+    color: var(--text);
+    font: inherit;
+}
+
+textarea.text-input {
+    resize: vertical;
+}
+
+.text-input::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+}
+
+.text-input[aria-invalid="true"] {
+    border-color: var(--danger-text);
+    outline: 0.15rem solid var(--danger-text);
+}
+
+/* ===== ヘッダー・設定バー ===== */
+.app-header {
+    padding: 0.9rem 1.5rem;
+    background: var(--header-bg);
+    color: var(--header-fg);
+    border-bottom: var(--border-w) solid var(--chip-border-color);
+}
+
+.app-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.75rem;
+    padding: 1rem 1.5rem;
+}
+
+.toolbar-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.toolbar-label {
+    font-weight: 700;
+}
+
+.notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0 1.5rem 1rem;
+    padding: 0.75rem 1rem;
+    border: var(--border-w) solid var(--danger-text);
+    border-left-width: 0.5rem;
+    border-radius: 0.4rem;
+    background: var(--danger-soft);
+    color: var(--text);
+}
+
+/* ===== ボード・列 ===== */
+.board {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0 1.5rem 2rem;
+    align-items: flex-start;
+}
+
+.column {
+    width: min(21rem, 100%);
+    padding: 0.75rem;
+    border: var(--border-w) solid var(--column-border);
+    border-radius: 0.75rem;
+    background: var(--column-bg);
+}
+
+.column-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.column-title {
+    flex: 1 1 6rem;
+    min-width: 0;
+    margin: 0;
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.3rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+    word-break: break-word;
+    cursor: pointer;
+}
+
+.column-title:hover {
+    background: var(--hover-bg);
+}
+
+.column-title-input {
+    flex: 1 1 6rem;
+    min-width: 0;
+    font-weight: 800;
+}
+
+.column-actions {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.card-list {
+    min-height: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    border-radius: 0.5rem;
+}
+
+.card-list.drag-over {
+    background: var(--hover-bg);
+}
+
+.drop-indicator {
+    flex-shrink: 0;
+    height: 0.3rem;
+    border-radius: 0.15rem;
+    background: var(--accent);
+    pointer-events: none;
+}
+
+/* ===== カード ===== */
+.card {
+    padding: 0.7rem 0.8rem;
+    border: var(--border-w) solid var(--card-border);
+    border-radius: 0.6rem;
+    background: var(--card-bg);
+    color: var(--text);
+    cursor: grab;
+}
+
+/* カードの色。テーマの背景色に混ぜるので、どの配色でも文字が読める */
+.card.has-color {
+    background: color-mix(in srgb, var(--c) var(--card-tint), var(--card-bg));
+    border-left: 0.5rem solid var(--c);
+}
+
+.card.dragging {
+    opacity: 0.4;
+}
+
+.card-main {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.card-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.card-tags {
+    margin-bottom: 0.35rem;
+}
+
+.chip {
+    display: inline-block;
+    max-width: 100%;
+    padding: 0.05rem 0.7rem;
+    border: var(--border-w) solid var(--chip-border-color);
+    border-radius: 999px;
+    background: var(--c);
+    color: var(--c-fg);
+    font-size: 0.9rem;
+    font-weight: 700;
+    word-break: break-word;
+}
+
+.card-text {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 700;
+    word-break: break-word;
+}
+
+.card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.badge {
+    padding: 0 0.55rem;
+    border: var(--border-w) solid var(--card-border);
+    border-radius: 0.35rem;
+    background: var(--card-bg);
+    color: var(--text);
+    font-weight: 700;
+    /* 「3日超過」のような語の途中では折り返さず、空白の位置で改行する */
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+}
+
+.priority-high { border-color: var(--prio-high); color: var(--prio-high); }
+.priority-medium { border-color: var(--prio-medium); color: var(--prio-medium); }
+.priority-low { border-color: var(--prio-low); color: var(--prio-low); }
+
+.due-overdue {
+    border-color: var(--danger-bg);
+    background: var(--danger-bg);
+    color: var(--danger-fg);
+}
+
+.due-today {
+    border-color: var(--warn-bg);
+    background: var(--warn-bg);
+    color: var(--warn-fg);
+}
+
+.due-soon {
+    border-color: var(--warn-bg);
+}
+
+.icon-btn {
+    flex-shrink: 0;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+    border: var(--border-w) solid var(--control-border);
+    border-radius: 0.4rem;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.icon-btn:hover {
+    background: var(--danger-soft);
+    border-color: var(--danger-text);
+    color: var(--danger-text);
+}
+
+/* ===== 追加フォーム ===== */
+.add-card-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.add-card-form .text-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.add-column-form {
+    display: flex;
+    gap: 0.5rem;
+    width: min(21rem, 100%);
+    padding: 0.75rem;
+    border: var(--border-w) dashed var(--column-border);
+    border-radius: 0.75rem;
+}
+
+.add-column-form .text-input {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ===== ダイアログ ===== */
+dialog {
+    width: min(34rem, calc(100vw - 2rem));
+    padding: 0;
+    border: var(--border-w) solid var(--card-border);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    color: var(--text);
+}
+
+dialog::backdrop {
+    background: var(--backdrop);
+}
+
+.dialog-body {
+    padding: 1.25rem;
+}
+
+.dialog-body h2 {
+    margin: 0 0 1rem;
+    font-size: 1.3rem;
+}
+
+.field {
+    display: block;
+    margin: 0 0 1.1rem;
+    padding: 0;
+    border: none;
+}
+
+.field-label {
+    display: block;
+    margin-bottom: 0.3rem;
+    padding: 0;
+    font-weight: 700;
+}
+
+.hint {
+    display: block;
+    margin: 0.3rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.form-error {
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.75rem;
+    border: var(--border-w) solid var(--danger-text);
+    border-radius: 0.4rem;
+    background: var(--danger-soft);
+    color: var(--text);
+    font-weight: 700;
+}
+
+/* 内容が長くてスクロールしても、保存などのボタンが常に見えるようにする */
+.dialog-actions {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+    padding: 0.75rem 0 0.1rem;
+    border-top: var(--border-w) solid var(--column-border);
+    background: var(--surface);
+}
+
+.push-right {
+    margin-left: auto;
+}
+
+/* ラジオボタンを大きな選択ボタンとして見せる */
+.option-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.option {
+    position: relative;
+    cursor: pointer;
+}
+
+.option input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.option-face {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0.2rem 0.9rem;
+    border: var(--border-w) solid var(--control-border);
+    border-radius: 0.5rem;
+    background: var(--surface);
+    color: var(--text);
+    font-weight: 700;
+}
+
+.option-face[class*="color-"] {
+    border-color: var(--c);
+    background: var(--c);
+    color: var(--c-fg);
+}
+
+.option input:checked + .option-face {
+    outline: 0.2rem solid var(--text);
+    outline-offset: 0.15rem;
+}
+
+.option input:checked + .option-face::before {
+    content: "✓ ";
+    white-space: pre;
+}
+
+.option input:focus-visible + .option-face {
+    outline: 0.25rem solid var(--focus);
+    outline-offset: 0.15rem;
+}
+
+/* ===== カテゴリー設定 ===== */
+.category-list {
+    margin: 0 0 1.25rem;
+    padding: 0;
+    list-style: none;
+}
+
+.category-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+    border-bottom: var(--border-w) solid var(--column-border);
+}
+
+.category-row .chip {
+    flex: 0 0 100%;
+    max-width: fit-content;
+}
+
+.category-row .text-input {
+    width: auto;
+    flex: 1 1 9rem;
+    min-width: 0;
+}
+
+.category-row select.text-input {
+    flex: 0 1 8rem;
+}
+
+.empty-note {
+    padding: 0.75rem 0;
+    color: var(--text-muted);
+}
+
+.category-add {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+}
+
+.category-add .field {
+    flex: 1 1 10rem;
+    margin: 0;
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タスクボード</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="prefs.js"></script>
+</head>
+<body>
+    <header class="app-header">
+        <h1>タスクボード</h1>
+    </header>
+
+    <section class="toolbar" aria-label="表示設定">
+        <div class="toolbar-group">
+            <span class="toolbar-label">配色</span>
+            <button type="button" class="choice" data-theme-value="light">明るい</button>
+            <button type="button" class="choice" data-theme-value="dark">暗い</button>
+            <button type="button" class="choice" data-theme-value="contrast">高コントラスト</button>
+        </div>
+        <div class="toolbar-group">
+            <span class="toolbar-label">文字サイズ</span>
+            <button type="button" class="choice" data-font-size-value="normal">標準</button>
+            <button type="button" class="choice" data-font-size-value="large">大</button>
+            <button type="button" class="choice" data-font-size-value="xlarge">特大</button>
+        </div>
+        <button type="button" id="open-category-dialog" class="btn-secondary">カテゴリー設定</button>
+    </section>
+
+    <div id="notice" class="notice" role="alert" hidden>
+        <span id="notice-text"></span>
+        <button type="button" id="notice-close" class="btn-secondary btn-small">閉じる</button>
+    </div>
+
+    <main class="board" id="board"></main>
+
+    <dialog id="card-dialog" aria-labelledby="card-dialog-title">
+        <form id="card-form" class="dialog-body" novalidate>
+            <h2 id="card-dialog-title">カードを編集</h2>
+
+            <label class="field">
+                <span class="field-label">タイトル</span>
+                <input type="text" id="card-title-input" class="text-input" maxlength="200" autocomplete="off">
+            </label>
+
+            <label class="field">
+                <span class="field-label">説明</span>
+                <textarea id="card-description-input" class="text-input" rows="4" maxlength="2000"></textarea>
+            </label>
+
+            <label class="field">
+                <span class="field-label">期限</span>
+                <input type="date" id="card-due-input" class="text-input">
+            </label>
+
+            <fieldset class="field">
+                <legend class="field-label">優先度</legend>
+                <div class="option-group">
+                    <label class="option">
+                        <input type="radio" name="card-priority" value="" checked>
+                        <span class="option-face">なし</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="card-priority" value="high">
+                        <span class="option-face">▲ 高</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="card-priority" value="medium">
+                        <span class="option-face">◆ 中</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="card-priority" value="low">
+                        <span class="option-face">▼ 低</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <label class="field">
+                <span class="field-label">カテゴリー</span>
+                <select id="card-category-select" class="text-input"></select>
+                <span class="hint">カテゴリーの追加・変更は、画面上部の「カテゴリー設定」からできます。</span>
+            </label>
+
+            <fieldset class="field">
+                <legend class="field-label">カードの色</legend>
+                <div class="option-group" id="card-color-options"></div>
+            </fieldset>
+
+            <p id="card-form-error" class="form-error" role="alert" hidden></p>
+
+            <div class="dialog-actions">
+                <button type="button" id="card-delete-button" class="btn-danger">削除</button>
+                <button type="button" id="card-cancel-button" class="btn-secondary push-right">キャンセル</button>
+                <button type="submit" class="btn-primary">保存</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="category-dialog" aria-labelledby="category-dialog-title">
+        <div class="dialog-body">
+            <h2 id="category-dialog-title">カテゴリー設定</h2>
+            <p class="hint">カテゴリーの名前と色を設定します。変更はすぐに反映されます。</p>
+
+            <ul id="category-list" class="category-list"></ul>
+
+            <form id="category-add-form" class="category-add" novalidate>
+                <label class="field">
+                    <span class="field-label">新しいカテゴリー名</span>
+                    <input type="text" id="category-name-input" class="text-input" maxlength="30" autocomplete="off">
+                </label>
+                <label class="field">
+                    <span class="field-label">色</span>
+                    <select id="category-color-select" class="text-input"></select>
+                </label>
+                <button type="submit" class="btn-primary">追加</button>
+            </form>
+
+            <p id="category-error" class="form-error" role="alert" hidden></p>
+
+            <div class="dialog-actions">
+                <button type="button" id="category-close-button" class="btn-primary push-right">閉じる</button>
+            </div>
+        </div>
+    </dialog>
+
+    <script src="app.js"></script>
+</body>
+</html>
