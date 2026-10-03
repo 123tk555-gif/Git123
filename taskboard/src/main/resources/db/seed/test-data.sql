@@ -1,6 +1,12 @@
 -- 動作確認用のテストデータ。実行するたびに tasks を空にして入れ直す(ID は 1 から付く)。
 -- 期限は実行日(current_date)を基準にして、期限切れ・今日・近日・先・なし がそろうようにしている。
 TRUNCATE TABLE tasks RESTART IDENTITY;
+TRUNCATE TABLE column_sorts;
+
+-- カラムごとの並び順。「完了」は選ばれていない状態(手動として扱われる)のままにしておく。
+INSERT INTO column_sorts (status, sort_key) VALUES
+('TODO',        'DUE_DATE'),
+('IN_PROGRESS', 'PRIORITY');
 
 INSERT INTO tasks (title, status, due_date, priority, category, color, sort_order, created_at) VALUES
 ('週次レポートの資料を作成する', 'TODO',        current_date + 2,  'HIGH',   '仕事',   'YELLOW', 1, now() - interval '6 days'),
