@@ -1,9 +1,14 @@
 :root {
-  --text: #000;
+  --text: #111;
+  --text-sub: #333;
   --bg: #fff;
+  --column-bg: #ececec;
+  --border: #555;
   --header-bg: #003a70;
   --header-text: #fff;
   --focus: #b35c00;
+  --alert-bg: #b00020;
+  --alert-text: #fff;
 
   font-family: system-ui, 'Segoe UI', 'Yu Gothic UI', 'Meiryo', sans-serif;
   font-size: 20px;
@@ -30,4 +35,218 @@ body {
 .app-header h1 {
   margin: 0;
   font-size: 32px;
+}
+
+.app-main {
+  padding: 16px;
+}
+
+/* 読み込み中・エラー */
+.status-message {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.error-message {
+  max-width: 900px;
+  padding: 20px 24px;
+  border: 4px solid var(--alert-bg);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.error-message p {
+  margin: 0 0 12px;
+}
+
+.error-message__title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--alert-bg);
+}
+
+.button {
+  min-height: 48px;
+  padding: 8px 24px;
+  border: 3px solid var(--header-bg);
+  border-radius: 8px;
+  background: var(--header-bg);
+  color: var(--header-text);
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* ボード: 3列は常に横並び。画面が狭いときは改行せず横にスクロールする */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(260px, 1fr));
+  gap: 16px;
+  align-items: start;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.column {
+  min-width: 0;
+  padding: 12px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: var(--column-bg);
+}
+
+.column__header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid var(--text);
+}
+
+.column__title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0;
+  font-size: 28px;
+}
+
+.column__count {
+  font-size: 20px;
+  font-weight: normal;
+}
+
+.column__sort {
+  margin: 4px 0 0;
+  font-size: 18px;
+  color: var(--text-sub);
+}
+
+.column__empty {
+  margin: 0;
+  padding: 16px;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.column__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* カード: 背景はうすい色、左に太い帯。色名は文字でも表示する */
+.card {
+  padding: 14px 16px;
+  border: 2px solid var(--border);
+  border-left-width: 12px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.card--white {
+  border-left-color: #666;
+  background: #fff;
+}
+
+.card--yellow {
+  border-left-color: #8a6d00;
+  background: #fff6c2;
+}
+
+.card--green {
+  border-left-color: #1e6b1e;
+  background: #ddf3dd;
+}
+
+.card--blue {
+  border-left-color: #1f4fa3;
+  background: #dde9fb;
+}
+
+.card--pink {
+  border-left-color: #a3285e;
+  background: #fbe0ec;
+}
+
+.card--orange {
+  border-left-color: #a65200;
+  background: #ffe6cc;
+}
+
+.card__title {
+  margin: 0 0 8px;
+  font-size: 22px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* 期限の注意: 色だけでなく文字と枠でも区別する */
+.card__alert {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 2px 12px;
+  border: 3px solid var(--text);
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.card__alert--overdue {
+  border-color: var(--alert-bg);
+  background: var(--alert-bg);
+  color: var(--alert-text);
+}
+
+.card__alert--today,
+.card__alert--soon {
+  background: #fff;
+}
+
+.card__meta {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  font-size: 18px;
+}
+
+.card__meta div {
+  display: grid;
+  grid-template-columns: 4.5em 1fr;
+}
+
+.card__meta dt {
+  font-weight: bold;
+}
+
+.card__meta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* 優先度: 高は黒地に白文字、中は枠線、低は点線 */
+.priority {
+  display: inline-block;
+  min-width: 2em;
+  padding: 0 10px;
+  border: 2px solid var(--text);
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.priority--high {
+  background: var(--text);
+  color: #fff;
+}
+
+.priority--medium {
+  background: #fff;
+}
+
+.priority--low {
+  border-style: dashed;
+  background: #fff;
+  font-weight: normal;
 }
