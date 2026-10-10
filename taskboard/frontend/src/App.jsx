@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { fetchColumnSort, fetchTasks } from './api.js'
 import Board from './components/Board.jsx'
+import DeleteDialog from './components/DeleteDialog.jsx'
+import TaskDialog from './components/TaskDialog.jsx'
 import { STATUSES } from './labels.js'
 
 async function loadColumns() {
@@ -13,10 +15,18 @@ async function loadColumns() {
   )
 }
 
+function categoriesOf(columns) {
+  const names = columns.flatMap((column) => column.tasks.map((task) => task.category)).filter(Boolean)
+  return [...new Set(names)].sort()
+}
+
 function App() {
   const [phase, setPhase] = useState('loading')
   const [columns, setColumns] = useState([])
   const [reloadCount, setReloadCount] = useState(0)
+  // null / { type: 'add', status } / { type: 'edit', task } / { type: 'delete', task }
+  const [dialog, setDialog] = useState(null)
+  const [notice, setNotice] = useState('')
 
   useEffect(() => {
     let cancelled = false
@@ -35,9 +45,19 @@ function App() {
     }
   }, [reloadCount])
 
+  const reload = () => setReloadCount((count) => count + 1)
+
   const retry = () => {
     setPhase('loading')
-    setReloadCount((count) => count + 1)
+    reload()
+  }
+
+  const closeDialog = () => setDialog(null)
+
+  const handleDone = (message) => {
+    setDialog(null)
+    setNotice(message)
+    reload()
   }
 
   return (
@@ -46,6 +66,9 @@ function App() {
         <h1>トレロ風タスク管理アプリ</h1>
       </header>
       <main className="app-main">
+        <p className={notice ? 'notice' : 'notice notice--empty'} role="status">
+          {notice}
+        </p>
         {phase === 'loading' && (
           <p className="status-message" role="status">
             読み込み中です…
@@ -62,8 +85,26 @@ function App() {
             </button>
           </div>
         )}
-        {phase === 'ready' && <Board columns={columns} />}
+        {phase === 'ready' && (
+          <Board
+            columns={columns}
+            onAdd={(status) => setDialog({ type: 'add', status })}
+            onEdit={(task) => setDialog({ type: 'edit', task })}
+            onDelete={(task) => setDialog({ type: 'delete', task })}
+          />
+        )}
       </main>
+
+      {(dialog?.type === 'add' || dialog?.type === 'edit') && (
+        <TaskDialog
+          task={dialog.task}
+          initialStatus={dialog.status}
+          categories={categoriesOf(columns)}
+          onClose={closeDialog}
+          onSaved={handleDone}
+        />
+      )}
+      {dialog?.type === 'delete' && <DeleteDialog task={dialog.task} onClose={closeDialog} onDeleted={handleDone} />}
     </>
   )
 }
