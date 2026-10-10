@@ -1,8 +1,9 @@
 import { SORT_LABELS } from '../labels.js'
 import TaskCard from './TaskCard.jsx'
 
-function Column({ status, label, sort, tasks, onAdd, onEdit, onDelete }) {
+function Column({ status, label, sort, tasks, onAdd, onEdit, onDelete, onSortChange }) {
   const headingId = `column-${status}`
+  const sortId = `sort-${status}`
 
   return (
     <section className="column" aria-labelledby={headingId}>
@@ -11,7 +12,23 @@ function Column({ status, label, sort, tasks, onAdd, onEdit, onDelete }) {
           {label}
           <span className="column__count">{tasks.length}件</span>
         </h2>
-        <p className="column__sort">並び順: {SORT_LABELS[sort]}</p>
+        <div className="column__sort">
+          <label htmlFor={sortId}>
+            並び順<span className="visually-hidden">({label})</span>
+          </label>
+          <select
+            id={sortId}
+            className="column__sort-select"
+            value={sort}
+            onChange={(event) => onSortChange(status, event.target.value)}
+          >
+            {Object.entries(SORT_LABELS).map(([value, text]) => (
+              <option key={value} value={value}>
+                {text}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       <button type="button" className="button button--add" onClick={() => onAdd(status)}>
         ＋ カードを追加<span className="visually-hidden">({label})</span>
