@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { fetchColumnSort, fetchTasks } from './api.js'
+import { changeColumnSort, fetchColumnSort, fetchTasks } from './api.js'
 import Board from './components/Board.jsx'
 import DeleteDialog from './components/DeleteDialog.jsx'
 import TaskDialog from './components/TaskDialog.jsx'
-import { STATUSES } from './labels.js'
+import { SORT_LABELS, STATUSES } from './labels.js'
 
 async function loadColumns() {
   return Promise.all(
@@ -26,7 +26,8 @@ function App() {
   const [reloadCount, setReloadCount] = useState(0)
   // null / { type: 'add', status } / { type: 'edit', task } / { type: 'delete', task }
   const [dialog, setDialog] = useState(null)
-  const [notice, setNotice] = useState('')
+  // { text, isError }。追加・更新・削除・並び順の変更の結果を画面の上に出す
+  const [notice, setNotice] = useState(null)
 
   useEffect(() => {
     let cancelled = false
@@ -56,7 +57,20 @@ function App() {
 
   const handleDone = (message) => {
     setDialog(null)
-    setNotice(message)
+    setNotice({ text: message, isError: false })
+    reload()
+  }
+
+  // 選んだ並び順はすぐメニューに反映し、保存できたらカードを並べ直す。失敗したら元に戻す
+  const handleSortChange = async (status, sort) => {
+    const label = STATUSES.find((s) => s.key === status).label
+    setColumns((current) => current.map((column) => (column.status === status ? { ...column, sort } : column)))
+    try {
+      await changeColumnSort(status, sort)
+      setNotice({ text: `「${label}」の並び順を「${SORT_LABELS[sort]}」にしました`, isError: false })
+    } catch (error) {
+      setNotice({ text: `並び順を変更できませんでした。${error.message}`, isError: true })
+    }
     reload()
   }
 
@@ -66,8 +80,9 @@ function App() {
         <h1>トレロ風タスク管理アプリ</h1>
       </header>
       <main className="app-main">
-        <p className={notice ? 'notice' : 'notice notice--empty'} role="status">
-          {notice}
+        <p className={`notice${notice ? '' : ' notice--empty'}${notice?.isError ? ' notice--error' : ''}`} role="status">
+          {notice?.isError && <strong>エラー: </strong>}
+          {notice?.text}
         </p>
         {phase === 'loading' && (
           <p className="status-message" role="status">
@@ -91,6 +106,7 @@ function App() {
             onAdd={(status) => setDialog({ type: 'add', status })}
             onEdit={(task) => setDialog({ type: 'edit', task })}
             onDelete={(task) => setDialog({ type: 'delete', task })}
+            onSortChange={handleSortChange}
           />
         )}
       </main>

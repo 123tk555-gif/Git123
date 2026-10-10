@@ -38,6 +38,10 @@ export async function fetchColumnSort(status) {
   return sort
 }
 
+export function changeColumnSort(status, sort) {
+  return sendJson('PUT', `/api/columns/${status}/sort`, { sort })
+}
+
 export function fetchTasks(status, sort) {
   return request(`/api/tasks?status=${status}&sort=${sort}`)
 }
