@@ -62,6 +62,13 @@ public class TaskController {
                 .orElseThrow(() -> notFound(id));
     }
 
+    @PutMapping("/{id}/position")
+    public TaskResponse move(@PathVariable long id, @Valid @RequestBody TaskMoveRequest request) {
+        return service.move(id, request.status(), request.index())
+                .map(TaskResponse::from)
+                .orElseThrow(() -> notFound(id));
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) {

@@ -1,5 +1,6 @@
 package com.example.taskboard.task;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +52,37 @@ public class TaskService {
             task.moveTo(request.status(), nextOrder);
             return task;
         });
+    }
+
+    /**
+     * 指定した列の「手動の並び順」の index 番目(0 が先頭)に入れ、その列の並び位置を 1 から振り直す。
+     * index が列の件数より大きいときは末尾に入れる。別の列から来たときは、元の列も詰めて振り直す。
+     */
+    @Transactional
+    public Optional<Task> move(long id, TaskStatus status, int index) {
+        return repository.findById(id).map(task -> {
+            TaskStatus from = task.getStatus();
+            List<Task> target = new ArrayList<>(manualOrderOf(status));
+            target.removeIf(t -> t.getId().equals(task.getId()));
+            target.add(Math.min(index, target.size()), task);
+            renumber(target, status);
+            if (from != status) {
+                List<Task> source = new ArrayList<>(manualOrderOf(from));
+                source.removeIf(t -> t.getId().equals(task.getId()));
+                renumber(source, from);
+            }
+            return task;
+        });
+    }
+
+    private List<Task> manualOrderOf(TaskStatus status) {
+        return sorted(repository.findAll(TaskSpecifications.matching(status, null, null, null)), TaskSortKey.MANUAL);
+    }
+
+    private static void renumber(List<Task> tasks, TaskStatus status) {
+        for (int i = 0; i < tasks.size(); i++) {
+            tasks.get(i).moveTo(status, i + 1);
+        }
     }
 
     @Transactional

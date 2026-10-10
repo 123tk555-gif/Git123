@@ -92,7 +92,7 @@ body {
 
 /* ボタンの種類(色だけでなく、枠や文字でも区別する) */
 .button:disabled {
-  cursor: wait;
+  cursor: not-allowed;
   opacity: 0.7;
 }
 
@@ -479,4 +479,36 @@ body {
   border: 2px solid var(--border);
   border-left-width: 8px;
   border-radius: 4px;
+}
+
+/* ドラッグ&ドロップ */
+.help {
+  margin: 0 0 16px;
+  font-size: 18px;
+}
+
+.card[draggable='true'] {
+  cursor: grab;
+}
+
+.card--dragging {
+  border-style: dashed;
+  opacity: 0.45;
+}
+
+.column--drop-target {
+  outline: 5px dashed var(--header-bg);
+  outline-offset: -7px;
+  background: #dfe8f5;
+}
+
+.column__hint {
+  margin: 6px 0 0;
+  font-size: 18px;
+}
+
+.drop-indicator {
+  height: 10px;
+  border-radius: 5px;
+  background: var(--header-bg);
 }
