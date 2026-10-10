@@ -77,6 +77,72 @@ body {
   cursor: pointer;
 }
 
+/* 画面には出さず、読み上げソフトにだけ伝える文字 */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ボタンの種類(色だけでなく、枠や文字でも区別する) */
+.button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.button--secondary {
+  border-color: var(--text);
+  background: #fff;
+  color: var(--text);
+}
+
+.button--danger {
+  border-color: var(--alert-bg);
+  background: var(--alert-bg);
+  color: var(--alert-text);
+}
+
+.button--danger-outline {
+  border-color: var(--alert-bg);
+  background: #fff;
+  color: var(--alert-bg);
+}
+
+.button--small {
+  min-height: 44px;
+  padding: 4px 16px;
+  font-size: 18px;
+}
+
+.button--add {
+  width: 100%;
+  margin-bottom: 16px;
+  border-style: dashed;
+  border-color: var(--header-bg);
+  background: #fff;
+  color: var(--header-bg);
+}
+
+/* 追加・更新・削除のあとのお知らせ */
+.notice {
+  margin: 0 0 16px;
+  padding: 10px 16px;
+  border: 3px solid var(--header-bg);
+  border-radius: 8px;
+  background: #fff;
+  font-weight: bold;
+}
+
+.notice--empty {
+  display: none;
+}
+
 /* ボード: 3列は常に横並び。画面が狭いときは改行せず横にスクロールする */
 .board {
   display: grid;
@@ -249,4 +315,145 @@ body {
   border-style: dashed;
   background: #fff;
   font-weight: normal;
+}
+
+.card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* 入力画面(ダイアログ) */
+.dialog {
+  width: min(680px, 94vw);
+  max-height: 92vh;
+  padding: 0;
+  border: 3px solid var(--text);
+  border-radius: 12px;
+  color: var(--text);
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+
+.dialog__form {
+  padding: 20px 24px 24px;
+}
+
+.dialog__title {
+  margin: 0 0 16px;
+  font-size: 28px;
+}
+
+.dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.form-error {
+  margin: 0 0 16px;
+  padding: 10px 16px;
+  border: 3px solid var(--alert-bg);
+  border-radius: 8px;
+  color: var(--alert-bg);
+  font-weight: bold;
+}
+
+.field {
+  margin: 0 0 18px;
+  padding: 0;
+  border: 0;
+}
+
+.field__label {
+  display: block;
+  margin-bottom: 6px;
+  padding: 0;
+  font-weight: bold;
+}
+
+.field__required,
+.field__hint {
+  font-size: 18px;
+  font-weight: normal;
+}
+
+.field__input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+}
+
+.field__input[aria-invalid='true'] {
+  border: 3px solid var(--alert-bg);
+}
+
+.field__input--date {
+  width: auto;
+}
+
+.field__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.field-error {
+  margin: 6px 0 0;
+  color: var(--alert-bg);
+  font-weight: bold;
+}
+
+.field-error::before {
+  content: '入力エラー: ';
+}
+
+/* 優先度・色の選択肢(大きめのラジオボタン) */
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 4px 14px 4px 10px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.choice:has(input:checked) {
+  border: 3px solid var(--text);
+  font-weight: bold;
+}
+
+.choice input {
+  width: 22px;
+  height: 22px;
+  margin: 0;
+}
+
+.swatch {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--border);
+  border-left-width: 8px;
+  border-radius: 4px;
 }

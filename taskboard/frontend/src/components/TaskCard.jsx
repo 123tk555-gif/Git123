@@ -1,7 +1,7 @@
 import { describeDue } from '../dueDate.js'
 import { COLOR_NAMES, PRIORITY_LABELS } from '../labels.js'
 
-function TaskCard({ task }) {
+function TaskCard({ task, onEdit, onDelete }) {
   const due = describeDue(task.dueDate, task.status)
 
   return (
@@ -30,6 +30,14 @@ function TaskCard({ task }) {
           <dd>{COLOR_NAMES[task.color]}</dd>
         </div>
       </dl>
+      <div className="card__actions">
+        <button type="button" className="button button--secondary button--small" onClick={() => onEdit(task)}>
+          編集<span className="visually-hidden">: {task.title}</span>
+        </button>
+        <button type="button" className="button button--danger-outline button--small" onClick={() => onDelete(task)}>
+          削除<span className="visually-hidden">: {task.title}</span>
+        </button>
+      </div>
     </article>
   )
 }
