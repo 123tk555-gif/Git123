@@ -54,6 +54,11 @@ export function updateTask(id, task) {
   return sendJson('PUT', `/api/tasks/${id}`, task)
 }
 
+/** status の列の「手動の並び順」の index 番目(0 が先頭)に移す。index が大きすぎるときは末尾 */
+export function moveTask(id, status, index) {
+  return sendJson('PUT', `/api/tasks/${id}/position`, { status, index })
+}
+
 export function deleteTask(id) {
   return request(`/api/tasks/${id}`, { method: 'DELETE' })
 }

@@ -1,17 +1,10 @@
 import Column from './Column.jsx'
 
-function Board({ columns, onAdd, onEdit, onDelete, onSortChange }) {
+function Board({ columns, ...handlers }) {
   return (
     <div className="board">
       {columns.map((column) => (
-        <Column
-          key={column.status}
-          {...column}
-          onAdd={onAdd}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          onSortChange={onSortChange}
-        />
+        <Column key={column.status} {...column} {...handlers} />
       ))}
     </div>
   )

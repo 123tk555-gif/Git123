@@ -139,6 +139,87 @@ class TaskApiTest {
                 .andExpect(jsonPath("$.message").isNotEmpty());
     }
 
+    private java.util.List<Integer> idsIn(String status) throws Exception {
+        String body = mvc.perform(get("/api/tasks?status=" + status)).andReturn().getResponse().getContentAsString();
+        return JsonPath.read(body, "$[*].id");
+    }
+
+    private java.util.List<Integer> sortOrdersIn(String status) throws Exception {
+        String body = mvc.perform(get("/api/tasks?status=" + status)).andReturn().getResponse().getContentAsString();
+        return JsonPath.read(body, "$[*].sortOrder");
+    }
+
+    private void move(int id, String status, int index) throws Exception {
+        mvc.perform(put("/api/tasks/" + id + "/position").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"status\":\"" + status + "\",\"index\":" + index + "}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.status").value(status));
+    }
+
+    private static void assertNumberedFromOne(java.util.List<Integer> sortOrders) {
+        for (int i = 0; i < sortOrders.size(); i++) {
+            org.assertj.core.api.Assertions.assertThat(sortOrders.get(i)).isEqualTo(i + 1);
+        }
+    }
+
+    @Test
+    void 移動_同じ列の中で指定した位置に入り_並び位置が1から振り直される() throws Exception {
+        int a = createAndGetId("{\"title\":\"A\",\"status\":\"DONE\"}");
+        int b = createAndGetId("{\"title\":\"B\",\"status\":\"DONE\"}");
+        int c = createAndGetId("{\"title\":\"C\",\"status\":\"DONE\"}");
+
+        move(c, "DONE", 0);
+
+        java.util.List<Integer> ids = idsIn("DONE");
+        org.assertj.core.api.Assertions.assertThat(ids.get(0)).isEqualTo(c);
+        org.assertj.core.api.Assertions.assertThat(ids.subList(ids.size() - 2, ids.size())).containsExactly(a, b);
+        assertNumberedFromOne(sortOrdersIn("DONE"));
+    }
+
+    @Test
+    void 移動_別の列の指定した位置に入り_元の列は詰められる() throws Exception {
+        int x = createAndGetId("{\"title\":\"X\",\"status\":\"TODO\"}");
+
+        move(x, "IN_PROGRESS", 1);
+
+        org.assertj.core.api.Assertions.assertThat(idsIn("IN_PROGRESS").get(1)).isEqualTo(x);
+        org.assertj.core.api.Assertions.assertThat(idsIn("TODO")).doesNotContain(x);
+        assertNumberedFromOne(sortOrdersIn("IN_PROGRESS"));
+        assertNumberedFromOne(sortOrdersIn("TODO"));
+    }
+
+    @Test
+    void 移動_位置が列の件数より大きいときは末尾に入る() throws Exception {
+        int x = createAndGetId("{\"title\":\"X\",\"status\":\"TODO\"}");
+
+        move(x, "DONE", 9999);
+
+        java.util.List<Integer> ids = idsIn("DONE");
+        org.assertj.core.api.Assertions.assertThat(ids.get(ids.size() - 1)).isEqualTo(x);
+    }
+
+    @Test
+    void 移動_入力が不正なら400_存在しないidは404() throws Exception {
+        int x = createAndGetId("{\"title\":\"X\"}");
+        String[] badBodies = {
+                "{}",
+                "{\"status\":\"TODO\"}",
+                "{\"index\":0}",
+                "{\"status\":\"TODO\",\"index\":-1}",
+                "{\"status\":\"XXX\",\"index\":0}",
+                "{\"status\":",
+        };
+        for (String body : badBodies) {
+            mvc.perform(put("/api/tasks/" + x + "/position").contentType(MediaType.APPLICATION_JSON).content(body))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").isNotEmpty());
+        }
+        mvc.perform(put("/api/tasks/999999/position").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"status\":\"TODO\",\"index\":0}"))
+                .andExpect(status().isNotFound());
+    }
+
     @Test
     void 削除_消すと取得できなくなり_存在しないidは404() throws Exception {
         int id = createAndGetId("{\"title\":\"消すタスク\"}");
