@@ -1,0 +1,13 @@
+{
+  "name": "requirements-docx",
+  "private": true,
+  "type": "module",
+  "description": "要件定義書.md から 要件定義書.docx を作る",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "docx": "^9.5.1",
+    "marked": "^16.3.0"
+  }
+}
