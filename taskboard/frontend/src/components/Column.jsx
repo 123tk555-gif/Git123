@@ -20,6 +20,7 @@ function Column({
   onDragStart,
   onDragEnd,
   onDropTask,
+  today,
 }) {
   const headingId = `column-${status}`
   const sortId = `sort-${status}`
@@ -76,6 +77,7 @@ function Column({
           isLast={index === tasks.length - 1}
           canReorder={isManual}
           isDragging={isDragged}
+          today={today}
           onEdit={onEdit}
           onDelete={onDelete}
           onMoveStep={onMoveStep}
@@ -119,7 +121,7 @@ function Column({
         </div>
         {!isManual && <p className="column__hint">この列の中で並べ替えるには、並び順を「手動」にしてください。</p>}
       </div>
-      <button type="button" className="button button--add" onClick={() => onAdd(status)}>
+      <button type="button" className="button button--add" data-focus={`add-${status}`} onClick={() => onAdd(status)}>
         ＋ カードを追加<span className="visually-hidden">({label})</span>
       </button>
       {tasks.length === 0 && dropIndex === null ? (

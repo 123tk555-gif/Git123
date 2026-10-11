@@ -1,8 +1,20 @@
 import { describeDue } from '../dueDate.js'
 import { COLOR_NAMES, PRIORITY_LABELS } from '../labels.js'
 
-function TaskCard({ task, isFirst, isLast, canReorder, isDragging, onEdit, onDelete, onMoveStep, onDragStart, onDragEnd }) {
-  const due = describeDue(task.dueDate, task.status)
+function TaskCard({
+  task,
+  isFirst,
+  isLast,
+  canReorder,
+  isDragging,
+  today,
+  onEdit,
+  onDelete,
+  onMoveStep,
+  onDragStart,
+  onDragEnd,
+}) {
+  const due = describeDue(task.dueDate, task.status, today)
 
   const handleDragStart = (event) => {
     event.dataTransfer.effectAllowed = 'move'

@@ -4,6 +4,7 @@ import Board from './components/Board.jsx'
 import DeleteDialog from './components/DeleteDialog.jsx'
 import TaskDialog from './components/TaskDialog.jsx'
 import { SORT_LABELS, STATUSES } from './labels.js'
+import { useToday } from './useToday.js'
 
 async function loadColumns() {
   return Promise.all(
@@ -30,19 +31,19 @@ function App() {
   const [notice, setNotice] = useState(null)
   // ドラッグ中のカード
   const [dragging, setDragging] = useState(null)
-  // 「上へ・下へ」のあと、並べ直した画面で同じボタンにキーボードの位置を戻すための目印(例: "up-12")
+  // 並べ直した画面で、キーボードの位置を移すボタンの目印(data-focus)。前から順に、押せるものへ移す
+  // 例: 「上へ」のあとは ["up-12", "down-12"]、削除のあとは ["add-TODO"]
   const focusAfterReload = useRef(null)
+  const today = useToday()
 
   useEffect(() => {
-    const key = focusAfterReload.current
-    if (!key) return
+    const keys = focusAfterReload.current
+    if (!keys) return
     focusAfterReload.current = null
-    const [direction, id] = key.split('-')
-    const other = direction === 'up' ? 'down' : 'up'
-    const target = [key, `${other}-${id}`]
-      .map((k) => document.querySelector(`[data-focus="${k}"]`))
+    keys
+      .map((key) => document.querySelector(`[data-focus="${key}"]`))
       .find((button) => button && !button.disabled)
-    target?.focus()
+      ?.focus()
   }, [columns])
 
   useEffect(() => {
@@ -77,6 +78,12 @@ function App() {
     reload()
   }
 
+  // 押した「削除」ボタンはカードと一緒に消えるので、同じ列の「カードを追加」にキーボードの位置を移す
+  const handleDeleted = (message) => {
+    focusAfterReload.current = [`add-${dialog.task.status}`]
+    handleDone(message)
+  }
+
   // 選んだ並び順はすぐメニューに反映し、保存できたらカードを並べ直す。失敗したら元に戻す
   const handleSortChange = async (status, sort) => {
     const label = STATUSES.find((s) => s.key === status).label
@@ -106,7 +113,9 @@ function App() {
   const handleMoveStep = (task, delta) => {
     const column = columns.find((c) => c.status === task.status)
     const index = column.tasks.findIndex((t) => t.id === task.id)
-    focusAfterReload.current = `${delta < 0 ? 'up' : 'down'}-${task.id}`
+    const pressed = delta < 0 ? 'up' : 'down'
+    const other = delta < 0 ? 'down' : 'up'
+    focusAfterReload.current = [`${pressed}-${task.id}`, `${other}-${task.id}`]
     saveMove(task, task.status, index + delta, `「${task.title}」を1つ${delta < 0 ? '上' : '下'}へ移動しました`)
   }
 
@@ -174,6 +183,7 @@ function App() {
             onDragEnd={() => setDragging(null)}
             onDropTask={handleDropTask}
             onMoveStep={handleMoveStep}
+            today={today}
           />
         )}
       </main>
@@ -187,7 +197,7 @@ function App() {
           onSaved={handleDone}
         />
       )}
-      {dialog?.type === 'delete' && <DeleteDialog task={dialog.task} onClose={closeDialog} onDeleted={handleDone} />}
+      {dialog?.type === 'delete' && <DeleteDialog task={dialog.task} onClose={closeDialog} onDeleted={handleDeleted} />}
     </>
   )
 }
