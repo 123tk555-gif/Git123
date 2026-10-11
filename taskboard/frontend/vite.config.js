@@ -13,7 +13,8 @@ export default defineConfig({
   server: {
     open: '/tasksboard.html',
     proxy: {
-      '/api': 'http://localhost:8080',
+      // サーバーは 127.0.0.1 だけで待ち受けるので、localhost(IPv6 の ::1 になることがある)ではなく直接指定する
+      '/api': 'http://127.0.0.1:8080',
     },
   },
 })

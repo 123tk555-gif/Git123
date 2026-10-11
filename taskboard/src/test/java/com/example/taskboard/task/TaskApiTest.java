@@ -8,16 +8,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.taskboard.TestcontainersConfiguration;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-/** データベースにつないで API を呼ぶ。各テストの変更は終わると元に戻る(ロールバック)。 */
+/** テスト専用のデータベースにつないで API を呼ぶ。各テストの変更は終わると元に戻る(ロールバック)。 */
+@Import(TestcontainersConfiguration.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -179,6 +182,9 @@ class TaskApiTest {
 
     @Test
     void 移動_別の列の指定した位置に入り_元の列は詰められる() throws Exception {
+        createAndGetId("{\"title\":\"P1\",\"status\":\"IN_PROGRESS\"}");
+        createAndGetId("{\"title\":\"P2\",\"status\":\"IN_PROGRESS\"}");
+        createAndGetId("{\"title\":\"T1\",\"status\":\"TODO\"}");
         int x = createAndGetId("{\"title\":\"X\",\"status\":\"TODO\"}");
 
         move(x, "IN_PROGRESS", 1);

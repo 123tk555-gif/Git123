@@ -1,16 +1,24 @@
-# React + Vite
+# タスクボードの画面(フロントエンド)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React 19 + Vite 8 で作った、トレロ風タスク管理アプリの画面です。
+機能や API の説明は、`taskboard/要件定義書.md` にまとめています。
 
-Currently, two official plugins are available:
+## よく使うコマンド(このフォルダで実行する)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| コマンド | 内容 |
+|---|---|
+| `npm install` | 初回だけ。必要な部品を入れる |
+| `npm run dev` | 開発用の画面サーバーを起動する(`http://localhost:5173/tasksboard.html`)。`/api` は Spring Boot(`127.0.0.1:8080`)に中継する |
+| `npm run build` | 画面を変換して `../src/main/resources/static/` に出力する(Spring Boot が配信する) |
+| `npm run lint` | コードの書き方をチェックする(oxlint) |
 
-## React Compiler
+## 主なファイル
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+| ファイル | 役割 |
+|---|---|
+| `tasksboard.html` | 画面の入口 |
+| `src/App.jsx` | 画面全体(読み込み・お知らせ・入力画面の開閉・ドラッグ中のカードの管理) |
+| `src/components/` | ボード・列・カード・入力画面・削除の確認画面などの部品 |
+| `src/api.js` | バックエンドの API を呼ぶ |
+| `src/dueDate.js`、`src/useToday.js` | 「期限切れ」「今日まで」などの表示と、今日の日付の管理 |
+| `src/index.css` | 見た目(大きめの文字・高コントラスト・色だけに頼らない表示) |
