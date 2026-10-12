@@ -59,6 +59,29 @@ export function moveTask(id, status, index) {
   return sendJson('PUT', `/api/tasks/${id}/position`, { status, index })
 }
 
+/** ゴミ箱に移す(すぐには消えない) */
 export function deleteTask(id) {
   return request(`/api/tasks/${id}`, { method: 'DELETE' })
+}
+
+/** { retentionDays, items: [{ task, deletedAt, purgeAt }] } */
+export function fetchTrash() {
+  return request('/api/trash')
+}
+
+export function restoreTask(id) {
+  return request(`/api/trash/${id}/restore`, { method: 'POST' })
+}
+
+export function purgeTask(id) {
+  return request(`/api/trash/${id}`, { method: 'DELETE' })
+}
+
+export function emptyTrash() {
+  return request('/api/trash', { method: 'DELETE' })
+}
+
+/** 新しい順の操作履歴 */
+export function fetchHistory(limit = 100) {
+  return request(`/api/history?limit=${limit}`)
 }

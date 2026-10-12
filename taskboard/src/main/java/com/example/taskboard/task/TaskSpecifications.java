@@ -10,10 +10,11 @@ final class TaskSpecifications {
     private TaskSpecifications() {
     }
 
-    /** 指定された条件だけを AND でつなぐ。何も指定されなければ全件。 */
+    /** ゴミ箱以外のカードから、指定された条件だけを AND でつないで探す。何も指定されなければボードの全件。 */
     static Specification<Task> matching(TaskStatus status, Priority priority, String category, String keyword) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.isNull(root.get("deletedAt")));
             if (status != null) {
                 predicates.add(cb.equal(root.get("status"), status));
             }

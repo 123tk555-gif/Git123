@@ -17,6 +17,15 @@ export const SORT_LABELS = {
   CATEGORY: 'カテゴリ順',
 }
 
+export const HISTORY_ACTION_LABELS = {
+  CREATED: '追加',
+  UPDATED: '編集',
+  MOVED: '移動',
+  DELETED: 'ゴミ箱へ',
+  RESTORED: '元に戻す',
+  PURGED: '完全に削除',
+}
+
 export const COLOR_NAMES = {
   WHITE: '白',
   YELLOW: '黄',

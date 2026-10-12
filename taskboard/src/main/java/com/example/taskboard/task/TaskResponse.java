@@ -12,7 +12,8 @@ public record TaskResponse(
         String category,
         CardColor color,
         int sortOrder,
-        Instant createdAt) {
+        Instant createdAt,
+        Instant updatedAt) {
 
     static TaskResponse from(Task task) {
         return new TaskResponse(
@@ -24,6 +25,7 @@ public record TaskResponse(
                 task.getCategory(),
                 task.getColor(),
                 task.getSortOrder(),
-                task.getCreatedAt());
+                task.getCreatedAt(),
+                task.getUpdatedAt());
     }
 }

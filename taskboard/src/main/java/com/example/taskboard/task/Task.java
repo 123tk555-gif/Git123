@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.time.LocalDate;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "tasks")
@@ -44,6 +45,14 @@ public class Task {
     @Column(nullable = false)
     private Instant createdAt;
 
+    // 既存の行にも値が入るよう、データベース側の既定値も付ける(列を後から足したため)
+    @Column(nullable = false)
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    private Instant updatedAt;
+
+    /** ゴミ箱に入れた日時。null ならボードに表示中のカード */
+    private Instant deletedAt;
+
     protected Task() {
     }
 
@@ -57,6 +66,7 @@ public class Task {
         this.color = color;
         this.sortOrder = sortOrder;
         this.createdAt = Instant.now();
+        this.updatedAt = this.createdAt;
     }
 
     public void update(String title, LocalDate dueDate, Priority priority, String category, CardColor color) {
@@ -65,11 +75,37 @@ public class Task {
         this.priority = priority;
         this.category = category;
         this.color = color;
+        touch();
     }
 
+    /** 利用者の操作で列や位置が変わったとき。最終更新日時も更新する */
     public void moveTo(TaskStatus status, int sortOrder) {
         this.status = status;
         this.sortOrder = sortOrder;
+        touch();
+    }
+
+    /** 並び位置の振り直し(見た目の順番を整えるだけ)。最終更新日時は変えない */
+    void renumberTo(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public void moveToTrash() {
+        this.deletedAt = Instant.now();
+    }
+
+    /** ゴミ箱から、元の列の指定した位置に戻す */
+    public void restore(int sortOrder) {
+        this.deletedAt = null;
+        moveTo(this.status, sortOrder);
+    }
+
+    public boolean isInTrash() {
+        return deletedAt != null;
+    }
+
+    private void touch() {
+        this.updatedAt = Instant.now();
     }
 
     public Long getId() {
@@ -106,5 +142,13 @@ public class Task {
 
     public Instant getCreatedAt() {
         return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public Instant getDeletedAt() {
+        return deletedAt;
     }
 }
