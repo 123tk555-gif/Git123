@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { changeColumnSort, fetchColumnSort, fetchTasks, moveTask } from './api.js'
+import { changeColumnSort, fetchColumnSort, fetchTasks, fetchTrash, moveTask } from './api.js'
 import Board from './components/Board.jsx'
 import DeleteDialog from './components/DeleteDialog.jsx'
+import HistoryDialog from './components/HistoryDialog.jsx'
 import TaskDialog from './components/TaskDialog.jsx'
+import TrashDialog from './components/TrashDialog.jsx'
 import { SORT_LABELS, STATUSES } from './labels.js'
 import { useToday } from './useToday.js'
 
@@ -25,7 +27,9 @@ function App() {
   const [phase, setPhase] = useState('loading')
   const [columns, setColumns] = useState([])
   const [reloadCount, setReloadCount] = useState(0)
-  // null / { type: 'add', status } / { type: 'edit', task } / { type: 'delete', task }
+  // ゴミ箱の中身 { retentionDays, items }
+  const [trash, setTrash] = useState(null)
+  // null / { type: 'add', status } / { type: 'edit', task } / { type: 'delete', task } / { type: 'history' } / { type: 'trash' }
   const [dialog, setDialog] = useState(null)
   // { text, isError }。追加・更新・削除・並び順の変更の結果を画面の上に出す
   const [notice, setNotice] = useState(null)
@@ -48,10 +52,11 @@ function App() {
 
   useEffect(() => {
     let cancelled = false
-    loadColumns().then(
-      (loaded) => {
+    Promise.all([loadColumns(), fetchTrash()]).then(
+      ([loaded, loadedTrash]) => {
         if (cancelled) return
         setColumns(loaded)
+        setTrash(loadedTrash)
         setPhase('ready')
       },
       () => {
@@ -82,6 +87,12 @@ function App() {
   const handleDeleted = (message) => {
     focusAfterReload.current = [`add-${dialog.task.status}`]
     handleDone(message)
+  }
+
+  // ゴミ箱の画面は開いたまま、ボードとゴミ箱の中身を読み直す
+  const handleTrashChanged = (message) => {
+    setNotice({ text: message, isError: false })
+    reload()
   }
 
   // 選んだ並び順はすぐメニューに反映し、保存できたらカードを並べ直す。失敗したら元に戻す
@@ -144,6 +155,14 @@ function App() {
     <>
       <header className="app-header">
         <h1>トレロ風タスク管理アプリ</h1>
+        <nav className="app-header__nav" aria-label="ボードの外の画面">
+          <button type="button" className="header-button" onClick={() => setDialog({ type: 'history' })}>
+            操作履歴
+          </button>
+          <button type="button" className="header-button" onClick={() => setDialog({ type: 'trash' })}>
+            ゴミ箱({trash?.items.length ?? 0}件)
+          </button>
+        </nav>
       </header>
       <main className="app-main">
         <p className={`notice${notice ? '' : ' notice--empty'}${notice?.isError ? ' notice--error' : ''}`} role="status">
@@ -197,7 +216,16 @@ function App() {
           onSaved={handleDone}
         />
       )}
-      {dialog?.type === 'delete' && <DeleteDialog task={dialog.task} onClose={closeDialog} onDeleted={handleDeleted} />}
+      {dialog?.type === 'delete' && (
+        <DeleteDialog
+          task={dialog.task}
+          retentionDays={trash?.retentionDays ?? 30}
+          onClose={closeDialog}
+          onDeleted={handleDeleted}
+        />
+      )}
+      {dialog?.type === 'history' && <HistoryDialog onClose={closeDialog} />}
+      {dialog?.type === 'trash' && <TrashDialog trash={trash} onClose={closeDialog} onChanged={handleTrashChanged} />}
     </>
   )
 }

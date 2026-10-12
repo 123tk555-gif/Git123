@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { createTask, updateTask } from '../api.js'
+import { formatDateTime } from '../dateTime.js'
 import { COLOR_NAMES, PRIORITY_LABELS, STATUSES } from '../labels.js'
 import Modal from './Modal.jsx'
 
@@ -79,6 +80,18 @@ function TaskDialog({ task, initialStatus, categories, onClose, onSaved }) {
         <h2 id="task-dialog-title" className="dialog__title">
           {heading}
         </h2>
+        {isEdit && (
+          <dl className="dialog__meta">
+            <div>
+              <dt>作成</dt>
+              <dd>{formatDateTime(task.createdAt)}</dd>
+            </div>
+            <div>
+              <dt>最終更新</dt>
+              <dd>{formatDateTime(task.updatedAt)}</dd>
+            </div>
+          </dl>
+        )}
 
         {formError && (
           <p className="form-error" role="alert">
