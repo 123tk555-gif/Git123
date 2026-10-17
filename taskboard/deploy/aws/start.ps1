@@ -1,4 +1,4 @@
-# 体験版のサーバー(EC2)を起動し、公開アドレス(https)を決めて表示する。
+﻿# 体験版のサーバー(EC2)を起動し、公開アドレス(https)を決めて表示する。
 # 使い方: aws sso login --profile taskboard のあとで  .\start.ps1
 # 起動している間は料金がかかる(t4g.micro で 1時間あたり約2〜3円)。使い終わったら stop.ps1 で止める。
 # 止めて起動するたびにサーバーの IP アドレスが変わるので、公開アドレスも毎回変わる。
@@ -14,8 +14,8 @@ function Invoke-Aws {
     if ($out) { $out | Out-String | ConvertFrom-Json }
 }
 
-$id = (Invoke-Aws ec2 describe-instances --filters Name=tag:Project,Values=taskboard `
-        Name=instance-state-name,Values=pending,running,stopping,stopped `
+$id = (Invoke-Aws ec2 describe-instances --filters 'Name=tag:Project,Values=taskboard' `
+        'Name=instance-state-name,Values=pending,running,stopping,stopped' `
         --query 'Reservations[0].Instances[0].InstanceId')
 if (-not $id) { throw 'taskboard のサーバーが見つかりません' }
 

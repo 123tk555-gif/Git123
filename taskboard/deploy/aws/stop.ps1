@@ -8,7 +8,7 @@ $aws = (Get-Command aws -ErrorAction SilentlyContinue).Source
 if (-not $aws) { $aws = 'C:\Program Files\Amazon\AWSCLIV2\aws.exe' }
 
 $id = & $aws ec2 describe-instances --profile $Profile_ --output text `
-    --filters Name=tag:Project,Values=taskboard Name=instance-state-name,Values=pending,running `
+    --filters 'Name=tag:Project,Values=taskboard' 'Name=instance-state-name,Values=pending,running' `
     --query 'Reservations[0].Instances[0].InstanceId'
 if ($LASTEXITCODE -ne 0) { throw 'サーバーの情報を取れませんでした' }
 if (-not $id -or $id -eq 'None') { Write-Host '動いているサーバーはありません'; exit 0 }
