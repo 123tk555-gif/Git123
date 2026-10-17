@@ -693,21 +693,17 @@ body {
   margin-top: 12px;
 }
 
-/* 体験版のお知らせ: 太い枠と見出しの文字で目立たせる(色だけに頼らない) */
+/* 体験版のお知らせ: 背景色なし・控えめな文字。枠線で、ほかの部分と区別する(色だけに頼らない) */
 .demo-banner {
   margin: 0 0 16px;
-  padding: 12px 16px;
-  border: 4px double var(--text);
+  padding: 8px 14px;
+  border: 2px solid var(--text);
   border-radius: 8px;
-  background: #fff6c2;
+  background: transparent;
   color: var(--text);
+  font-size: 18px;
 }
 
 .demo-banner p {
   margin: 0;
-}
-
-.demo-banner__title {
-  font-size: 22px;
-  font-weight: bold;
 }

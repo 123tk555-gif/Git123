@@ -174,7 +174,6 @@ function App() {
         </p>
         {appInfo?.demo && (
           <div className="demo-banner" role="note" aria-label="体験版のお知らせ">
-            <p className="demo-banner__title">体験版です</p>
             <p>
               どなたでも自由に試せます。入力した内容は{appInfo.resetLabel}に、すべて最初の状態(テストデータ)に戻ります。
               {appInfo.maxTasks > 0 && `カードは最大${appInfo.maxTasks}枚(ゴミ箱を含む)までです。`}
