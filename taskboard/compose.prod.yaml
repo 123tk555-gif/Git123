@@ -1,0 +1,48 @@
+# 公開用(体験版)。アプリとデータベースを、1台のサーバーの上で動かす。
+# 使い方: このフォルダに .env を作り(.env.example を参考に)、次を実行する
+#   docker compose -f compose.prod.yaml up -d --build
+# ふだんの開発用の compose.yaml とは別物(データの保存場所も別)。
+# 同じフォルダにあるため、プロジェクト名を分けておく(分けないと、開発用のデータベースが作り直されてしまう)
+name: taskboard-prod
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: taskboard
+      POSTGRES_USER: taskboard
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?.env に DB_PASSWORD を設定してください}
+      TZ: Asia/Tokyo
+    # 小さなサーバー向けに、使うメモリを抑える
+    command: ["postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=20", "-c", "work_mem=2MB"]
+    # データベースは外に公開しない(アプリのコンテナからだけ接続する)
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskboard -d taskboard"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  app:
+    build: .
+    image: taskboard-app
+    environment:
+      SPRING_PROFILES_ACTIVE: demo
+      DB_URL: jdbc:postgresql://db:5432/taskboard
+      DB_USERNAME: taskboard
+      DB_PASSWORD: ${DB_PASSWORD:?.env に DB_PASSWORD を設定してください}
+      TZ: Asia/Tokyo
+    ports:
+      - "${APP_PORT:-80}:8080"
+    volumes:
+      - app-logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  db-data:
+  app-logs:

@@ -33,6 +33,11 @@ function sendJson(method, url, data) {
   })
 }
 
+/** { demo, resetLabel, maxTasks }。体験版かどうかなど */
+export function fetchAppInfo() {
+  return request('/api/app-info')
+}
+
 export async function fetchColumnSort(status) {
   const { sort } = await request(`/api/columns/${status}/sort`)
   return sort

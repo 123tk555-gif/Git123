@@ -1,0 +1,9 @@
+# イメージを作るときに送らないもの(大きいもの・作り直すもの・秘密情報)
+target/
+logs/
+.env
+frontend/node_modules/
+src/main/resources/static/
+tools/
+*.docx
+*.md

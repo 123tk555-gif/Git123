@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,12 +26,15 @@ public class TaskService {
     private final TaskRepository repository;
     private final HistoryRecorder history;
     private final int retentionDays;
+    private final int maxTasks;
 
     public TaskService(TaskRepository repository, HistoryRecorder history,
-            @Value("${taskboard.trash.retention-days:30}") int retentionDays) {
+            @Value("${taskboard.trash.retention-days:30}") int retentionDays,
+            @Value("${taskboard.max-tasks:0}") int maxTasks) {
         this.repository = repository;
         this.history = history;
         this.retentionDays = retentionDays;
+        this.maxTasks = maxTasks;
     }
 
     public int retentionDays() {
@@ -49,6 +54,11 @@ public class TaskService {
     /** 状態・優先度・色を省略したときは「未着手・中・白」にし、その状態の列の末尾に追加する。 */
     @Transactional
     public Task create(TaskRequest request) {
+        // ゴミ箱のカードも数える(作って消すを繰り返して、データがたまり続けるのを防ぐ)
+        if (maxTasks > 0 && repository.count() >= maxTasks) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "カードは最大" + maxTasks + "枚まで(ゴミ箱のカードを含む)です。ゴミ箱を空にするか、不要なカードを完全に削除してください。");
+        }
         TaskStatus status = request.status() != null ? request.status() : TaskStatus.TODO;
         Priority priority = request.priority() != null ? request.priority() : Priority.MEDIUM;
         CardColor color = request.color() != null ? request.color() : CardColor.WHITE;

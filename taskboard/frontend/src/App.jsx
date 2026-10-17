@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { changeColumnSort, fetchColumnSort, fetchTasks, fetchTrash, moveTask } from './api.js'
+import { changeColumnSort, fetchAppInfo, fetchColumnSort, fetchTasks, fetchTrash, moveTask } from './api.js'
 import Board from './components/Board.jsx'
 import DeleteDialog from './components/DeleteDialog.jsx'
 import HistoryDialog from './components/HistoryDialog.jsx'
@@ -29,6 +29,8 @@ function App() {
   const [reloadCount, setReloadCount] = useState(0)
   // ゴミ箱の中身 { retentionDays, items }
   const [trash, setTrash] = useState(null)
+  // { demo, resetLabel, maxTasks }
+  const [appInfo, setAppInfo] = useState(null)
   // null / { type: 'add', status } / { type: 'edit', task } / { type: 'delete', task } / { type: 'history' } / { type: 'trash' }
   const [dialog, setDialog] = useState(null)
   // { text, isError }。追加・更新・削除・並び順の変更の結果を画面の上に出す
@@ -52,11 +54,12 @@ function App() {
 
   useEffect(() => {
     let cancelled = false
-    Promise.all([loadColumns(), fetchTrash()]).then(
-      ([loaded, loadedTrash]) => {
+    Promise.all([loadColumns(), fetchTrash(), fetchAppInfo()]).then(
+      ([loaded, loadedTrash, loadedInfo]) => {
         if (cancelled) return
         setColumns(loaded)
         setTrash(loadedTrash)
+        setAppInfo(loadedInfo)
         setPhase('ready')
       },
       () => {
@@ -169,6 +172,16 @@ function App() {
           {notice?.isError && <strong>エラー: </strong>}
           {notice?.text}
         </p>
+        {appInfo?.demo && (
+          <div className="demo-banner" role="note" aria-label="体験版のお知らせ">
+            <p className="demo-banner__title">体験版です</p>
+            <p>
+              どなたでも自由に試せます。入力した内容は{appInfo.resetLabel}に、すべて最初の状態(テストデータ)に戻ります。
+              {appInfo.maxTasks > 0 && `カードは最大${appInfo.maxTasks}枚(ゴミ箱を含む)までです。`}
+              個人情報や大切な内容は入力しないでください。
+            </p>
+          </div>
+        )}
         {phase === 'ready' && (
           <p className="help">
             カードはマウスでドラッグして、別の列や好きな位置へ移動できます。キーボードでは「上へ」「下へ」ボタンと、「編集」の「状態」で移動できます。
