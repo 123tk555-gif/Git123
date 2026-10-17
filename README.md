@@ -111,10 +111,25 @@ docker compose -f compose.prod.yaml up -d --build
 # 止めるとき(データは残る)
 docker compose -f compose.prod.yaml down
 ```
-- 開くアドレスは `http://localhost:<.env の APP_PORT>/tasksboard.html`(省略時は 80 番)。
+- 開くアドレスは `http://localhost/tasksboard.html`(80 番)です。`.env` に `SITE_ADDRESS=ドメイン` を書くと、HTTPS の証明書を自動で取得して `https://ドメイン/` で開けます(入口は Caddy が担当)。
 - ふだんの開発用(`compose.yaml`)とは別のプロジェクト(`taskboard-prod`)として動くので、開発用のデータには影響しません。
 - データベースは外に公開せず、アプリのコンテナからだけ接続します。メモリは合わせて 350MB 程度で、1GB 程度の小さなサーバーでも動きます。
-- AWS への公開手順は、このあと追加します。
+
+### AWS で公開する(必要な期間だけ動かす)
+
+東京リージョンの小さなサーバー(EC2 `t4g.micro`)で動かします。使うときだけ起動し、終わったら止めて、料金を抑えます。サーバーの準備(Docker のインストール、アプリの取得、起動)は初回の起動時に自動で行われます([deploy/aws/user-data.sh](taskboard/deploy/aws/user-data.sh))。
+
+```powershell
+aws sso login --profile taskboard     # 最初に1回サインインする(IAM Identity Center のユーザー)
+cd taskboard\deploy\aws
+.\start.ps1     # サーバーを起動し、公開アドレス(https://…sslip.io/)を表示する
+.\stop.ps1      # 使い終わったら止める
+```
+- 止めて起動し直すたびにサーバーの IP が変わるので、**公開アドレスも毎回変わります**(`start.ps1` が表示します。`IPアドレスの . を - にして .sslip.io を付けた名前`で、ドメインの購入は不要です)。
+- 起動してから開けるまで 1〜2 分かかります(証明書の発行を待つため)。
+- セキュリティグループ(入口)は 80 番と 443 番だけを開けています。データベースは外に出していません。
+- 料金の目安: 動いている間は1時間あたり約2〜3円、止めている間は保存領域(12GB)の分で月に約150円です。出しっぱなしだと月に 1,800 円前後になります。
+- 決まった(変わらない)アドレスや CloudFront を使いたい場合は、AWS サポートでアカウントの確認が済んでから設定します。
 
 ## フォルダ構成
 

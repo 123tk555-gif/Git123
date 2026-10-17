@@ -1,0 +1,7 @@
+# Caddy: the public entrance of the demo. It terminates HTTPS and forwards to the app.
+# SITE_ADDRESS is set in .env (e.g. 52-194-241-136.sslip.io). ":80" means plain HTTP only.
+{$SITE_ADDRESS::80} {
+	encode gzip
+	redir / /tasksboard.html
+	reverse_proxy app:8080
+}
