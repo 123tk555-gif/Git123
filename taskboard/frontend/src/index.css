@@ -692,3 +692,22 @@ body {
 .confirm-box .dialog__actions {
   margin-top: 12px;
 }
+
+/* 体験版のお知らせ: 太い枠と見出しの文字で目立たせる(色だけに頼らない) */
+.demo-banner {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border: 4px double var(--text);
+  border-radius: 8px;
+  background: #fff6c2;
+  color: var(--text);
+}
+
+.demo-banner p {
+  margin: 0;
+}
+
+.demo-banner__title {
+  font-size: 22px;
+  font-weight: bold;
+}
